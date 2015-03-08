@@ -4768,6 +4768,7 @@ bool ACodec::UninitializedState::onAllocateComponent(const sp<AMessage> &msg) {
     Vector<OMXCodec::CodecNameAndQuirks> matchingCodecs;
 
     AString mime;
+
     int32_t encoder = false;
     AString componentName;
     uint32_t quirks = 0;
@@ -4888,6 +4889,7 @@ bool ACodec::UninitializedState::onAllocateComponent(const sp<AMessage> &msg) {
             }
         }
 
+
         if (err == OK) {
             break;
         } else {
@@ -4911,7 +4913,6 @@ bool ACodec::UninitializedState::onAllocateComponent(const sp<AMessage> &msg) {
 
     notify = new AMessage(kWhatOMXMessage, mCodec->id());
     observer->setNotificationMessage(notify);
-
 
 
     {

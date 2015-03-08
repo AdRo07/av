@@ -450,15 +450,19 @@ bool AudioPolicyService::isStreamActive(audio_stream_type_t stream, uint32_t inP
 
 bool AudioPolicyService::isStreamActiveRemotely(audio_stream_type_t stream, uint32_t inPastMs) const
 {
+/*
     if (mpAudioPolicy == NULL) {
         return 0;
     }
     Mutex::Autolock _l(mLock);
     return mpAudioPolicy->is_stream_active_remotely(mpAudioPolicy, stream, inPastMs);
+*/
+    return false;
 }
 
 bool AudioPolicyService::isSourceActive(audio_source_t source) const
 {
+/*
     if (mpAudioPolicy == NULL) {
         return false;
     }
@@ -467,6 +471,9 @@ bool AudioPolicyService::isSourceActive(audio_source_t source) const
     }
     Mutex::Autolock _l(mLock);
     return mpAudioPolicy->is_source_active(mpAudioPolicy, source);
+*/
+        return false;
+
 }
 
 status_t AudioPolicyService::queryDefaultPreProcessing(int audioSession,
@@ -494,6 +501,7 @@ bool AudioPolicyService::isOffloadSupported(const audio_offload_info_t& info)
 #if HAVE_PRE_KITKAT_AUDIO_POLICY_BLOB
     return false;
 #endif
+/*
     if (mpAudioPolicy == NULL) {
         ALOGV("mpAudioPolicy == NULL");
         return false;
@@ -505,6 +513,7 @@ bool AudioPolicyService::isOffloadSupported(const audio_offload_info_t& info)
     }
 
     return mpAudioPolicy->is_offload_supported(mpAudioPolicy, &info);
+*/
 }
 
 status_t AudioPolicyService::listAudioPorts(audio_port_role_t role __unused,

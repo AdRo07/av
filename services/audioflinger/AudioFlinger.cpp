@@ -302,6 +302,13 @@ AudioFlinger::AudioHwDevice* AudioFlinger::findSuitableHwDev_l(
             if ((dev->get_supported_devices != NULL) &&
                     (dev->get_supported_devices(dev) & devices) == devices)
                 return audioHwDevice;
+#ifdef ICS_AUDIO_BLOB
+            else if (dev->get_supported_devices == NULL && i != 0 &&
+                    devices == 0x80)
+                // Reasonably safe assumption: A non-primary HAL without
+                // get_supported_devices is a locally-built A2DP binary
+                return audioHwDevice;
+#endif
         }
     } else {
         // check a match for the requested module handle
@@ -1003,12 +1010,12 @@ status_t AudioFlinger::setMasterMute(bool muted)
         }
         mHardwareStatus = AUDIO_HW_IDLE;
     }
-#endif
+//#endif
     // Now set the master mute in each playback thread.  Playback threads
     // assigned to HALs which do not have master mute support will apply master
     // mute during the mix operation.  Threads with HALs which do support master
     // mute will simply ignore the setting.
-#ifndef ICS_AUDIO_BLOB
+//#ifndef ICS_AUDIO_BLOB
     for (size_t i = 0; i < mPlaybackThreads.size(); i++)
         mPlaybackThreads.valueAt(i)->setMasterMute(muted);
 #endif
@@ -1554,7 +1561,7 @@ AudioFlinger::Client::Client(const sp<AudioFlinger>& audioFlinger, pid_t pid)
     :   RefBase(),
         mAudioFlinger(audioFlinger),
         // FIXME should be a "k" constant not hard-coded, in .h or ro. property, see 4 lines below
-        mMemoryDealer(new MemoryDealer(2048*1024, "AudioFlinger::Client")), //2MB
+        mMemoryDealer(new MemoryDealer(1024*1024, "AudioFlinger::Client")), //2MB
         mPid(pid),
         mTimedTrackCount(0)
 {
@@ -2072,8 +2079,12 @@ status_t AudioFlinger::openOutput(audio_module_handle_t module,
           *latencyMs = 0;
           if ((flags & AUDIO_OUTPUT_FLAG_LPA) || (flags & AUDIO_OUTPUT_FLAG_TUNNEL)) {
               AudioSessionDescriptor *desc = mDirectAudioTracks.valueFor(*output);
-              *latencyMs = desc->stream->get_latency(desc->stream);
-              return NO_ERROR;
+              if(desc != NULL) {
+                 *latencyMs = desc->stream->get_latency(desc->stream);
+                 return NO_ERROR;
+              } else {
+                 return NO_INIT;
+              }
           }
 #endif
     }

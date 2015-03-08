@@ -62,6 +62,9 @@ endif
 
 include $(CLEAR_VARS)
 
+# DoPa (20141124) - required in order to use Nvidia's 4.2.1 blobs
+USE_LEGACY_AUDIO_POLICY := 1
+
 LOCAL_SRC_FILES:= \
     AudioPolicyService.cpp \
     AudioPolicyEffects.cpp
